@@ -5,10 +5,13 @@ import { Header } from "../organisms/Header";
 export function Layout({ children }) {
     return ( 
         <>
+            {/* Cabecera de la página */}
             <Header/>
             <main>
+                {/* Aquí children tendrán el contenido de la página */}
                 {children}
             </main>
+            {/* Pie de página */}
             <Footer/>
         </>
 
