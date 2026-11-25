@@ -6,7 +6,7 @@ export function Header() {
     return (
         <header>
             <div className="contenedor encabezado">
-                <img src="img/logo.png" width="150" alt="Logo NutriVida" />
+                <img src="/img/logo.png" width="150" alt="Logo NutriVida" />
                 <nav aria-label="Navegación principal">
                     <ul>
                         {/* Usamos NavLink para navegar por ReactRouter */}
