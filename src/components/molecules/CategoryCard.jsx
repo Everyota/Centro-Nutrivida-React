@@ -7,7 +7,7 @@ export function CategoryCard({ categoria }) {
             <div className="producto-contenido">
                 <h3>{categoria.nombre}</h3>
                 <p>{categoria.descripcion}</p>
-                <ButtonLink href={categoria.pagina}>
+                <ButtonLink href={`/categoria/${categoria.id}`}>
                     Ver más
                 </ButtonLink>
             </div>
