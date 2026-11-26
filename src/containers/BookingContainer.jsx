@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { BookingForm } from "../components/organisms/BookingForm";
 import { validarCorreo, validarNoEstaVacio } from "../utils/validaciones";
+import { realizarReserva } from "../api/reservas";
+import { obtenerUsuario } from "../utils/usuario";
 
 export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
     const [
@@ -10,7 +12,7 @@ export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
         rut: "",
         nombres: "",
         apellidos: "",
-        email: "",
+        correo: "",
         celular: "",
         prevision: "",
         diaAtencion: "",
@@ -23,7 +25,7 @@ export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
         setErrors, // Función para cambiar los errores de los campos del formulario
     ] = useState({})
 
-    const usuarioLog = localStorage.getItem("usuario");
+    const usuarioLog = obtenerUsuario(); // Obtener el usuario logueado desde el localStorage
 
     const handleChange = (name, value) => {
         setFormData((prev) => ({
@@ -57,16 +59,15 @@ export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
     }
 
     const validarCorreoFormulario = () => {
-        const error = validarCorreo(formData.email);
-        handleError("email", error);
+        const error = validarCorreo(formData.correo);
+        handleError("correo", error);
         return error === "";
     }
 
-    const confirmarAgendamiento = (e) => {
+    const confirmarAgendamiento = async (e) => {
         e.preventDefault()
         //Validaciones de los campos del formulario
         let formularioValido = true;
-        debugger;
         if (usuarioLog === null) {
             if (validarNombres() === false) {
                 formularioValido = false;
@@ -80,8 +81,31 @@ export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
         }
         if (formularioValido) {
             // Si todo es válido, se puede proceder a confirmar el agendamiento
-            alert("Cita agendada con éxito para el servicio: " + servicioAgendamiento.nombre);
-            vaciarCarrito();
+            const fechaReserva = `${formData.diaAtencion}T${formData.horaAtencion}:00`;
+
+            const datosReserva = {
+                "fecha_reserva": fechaReserva,
+                "nombre_profesional": formData.profesional,
+                "servicio_id": servicioAgendamiento.id,
+            }
+
+            if (usuarioLog) {
+                datosReserva["usuario_id"] = usuarioLog.id;
+            } else {
+                datosReserva["rut"] = formData.rut;
+                datosReserva["nombres"] = formData.nombres;
+                datosReserva["apellidos"] = formData.apellidos;
+                datosReserva["correo"] = formData.correo;
+                datosReserva["celular"] = formData.celular;
+                datosReserva["prevision"] = formData.prevision;
+            }
+            const reservaRealizada = await realizarReserva(datosReserva);
+            if (reservaRealizada) {
+                alert("Cita agendada con éxito para el servicio: " + servicioAgendamiento.nombre);
+                vaciarCarrito();
+            } else {
+                alert("Hubo un error al realizar la reserva")
+            }
         }
 
     }
@@ -93,7 +117,7 @@ export function BookingContainer({ servicioAgendamiento, vaciarCarrito }) {
             onChange={handleChange}
             onSubmit={confirmarAgendamiento}
             onCancel={vaciarCarrito}
-            patientName={usuarioLog}
+            patientName={usuarioLog?.nombres}
             hours={["09:00", "10:00", "11:00"]}
             professionals={[
                 "Nut. Carolina Fuentes M.",
