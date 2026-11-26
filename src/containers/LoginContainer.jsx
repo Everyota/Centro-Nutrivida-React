@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { validarCorreo } from "../utils/validaciones";
 import { LoginForm } from "../components/organisms/LoginForm";
+import { login } from "../api/auth";
+import { guardarUsuario } from "../utils/usuario";
 
 export function LoginContainer() {
     const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
@@ -41,9 +43,9 @@ export function LoginContainer() {
             return false;
         }
 
-        if (password.length < 4 || password.length > 10) {
-            // Si es menor a 4 o mayor a 10, cambiamos el mensaje de error del input de contraseña
-            setPasswordError("La contraseña debe tener entre 4 y 10 caracteres.");
+        if (password.length < 4) {
+            // Si es menor a 4, cambiamos el mensaje de error del input de contraseña
+            setPasswordError("La contraseña debe tener al menos 4 caracteres.");
             return false;
         }
 
@@ -52,7 +54,7 @@ export function LoginContainer() {
         return true;
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Usamos las funciones de validación de arriba para validar los campos del formulario
@@ -61,10 +63,16 @@ export function LoginContainer() {
 
         if (correoValido && passwordValido) {
 
-            // Agregamos el usuario al localStorage
-            localStorage.setItem("usuario", email)
-            // Navegamos con ReactRouter a la vista home
-            navigate("/")
+            const usuarioIniciado = await login(email, password);
+            console.log("Usuario iniciado:", usuarioIniciado);
+            if (usuarioIniciado) {
+                // Agregamos el usuario al localStorage
+                guardarUsuario(usuarioIniciado);
+                // Navegamos con ReactRouter a la vista home
+                navigate("/")
+            } else {
+                setLoginMessage("Credenciales incorrectas. Por favor, inténtelo de nuevo.");
+            }
         } else {
             // Cambiamos el mensaje de error del formulario de login si alguno de los campos no es válido
             setLoginMessage("Revise los campos marcados antes de continuar.");

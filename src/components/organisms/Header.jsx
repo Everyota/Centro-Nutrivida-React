@@ -1,8 +1,9 @@
 import { NavLink } from "react-router";
+import { obtenerUsuario } from "../../utils/usuario";
 
 export function Header() {
     // Obtenemos el usuario logeado desde localStorage, si es que hay
-    const usuario = localStorage.getItem("usuario");
+    const usuario = obtenerUsuario();
     return (
         <header>
             <div className="contenedor encabezado">
@@ -19,7 +20,7 @@ export function Header() {
                 </nav>
                 {
                     /* Si hay usuario en localStorage, lo mostramos aquí */
-                    usuario && <p id="usuario-actual">¡Bienvenido/a {usuario}!</p>
+                    usuario && <p id="usuario-actual">¡Bienvenido/a {usuario.nombres}!</p>
                 }
 
                 <button id="btn-carrito" className="btn-carrito">

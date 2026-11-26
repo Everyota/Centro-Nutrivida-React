@@ -28,8 +28,7 @@ export function LoginForm({
                 id="password-login"
                 label="Contraseña"
                 type="password"
-                placeholder="Entre 4 y 10 caracteres"
-                maxLength="10"
+                placeholder="Más de 4 caracteres"
                 errorId="error-password-login"
                 value={passwordValue}
                 onChange={onChangePassword}
