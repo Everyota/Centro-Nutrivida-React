@@ -50,9 +50,9 @@ export function RegisterForm({
                 placeholder="nombre@duoc.cl"
                 maxLength="100"
                 errorId="error-email-paciente"
-                value={formData.email}
-                onChange={(value) => onChange("email", value)}
-                errorMessage={errors.email}
+                value={formData.correo}
+                onChange={(value) => onChange("correo", value)}
+                errorMessage={errors.correo}
             />
             <FormField
                 id="password-paciente"

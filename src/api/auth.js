@@ -15,3 +15,19 @@ export async function login(correo, password) {
         return null;
     }
 }
+
+export async function registrar(usuario) {
+    try {
+        const data = await pedir("/auth/registro", {
+            method: "POST",
+            body: JSON.stringify(usuario),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error("Error en registro:", error);
+        return null;
+    }
+}
